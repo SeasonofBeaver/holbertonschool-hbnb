@@ -1,10 +1,11 @@
-from app.presentation.views import app
-from app.business_logic.services import HbnbService
-from app.persistence.repository import InMemoryRepository
+from flask import Flask
+from flask_restx import Api
 
-""" Initialize repository and service """
-repository = InMemoryRepository()
-service = HbnbService(repository)
+def create_app():
+    app = Flask(__name__)
+    api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API')
 
-""" Expose the service as a global variable for use in views """
-app.service = service
+    # Placeholder for API namespaces (endpoints will be added later)
+    # Additional namespaces for places, reviews, and amenities will be added later
+
+    return app
