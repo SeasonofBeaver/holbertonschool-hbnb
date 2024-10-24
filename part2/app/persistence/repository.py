@@ -55,3 +55,10 @@ class InMemoryRepository(Repository):
 
     def get_by_attribute(self, attr_name, attr_value):
         return next((obj for obj in self._storage.values() if getattr(obj, attr_name) == attr_value), None)
+
+    def get_by_id(self, obj_id):
+        """Retrieve an object by its unique ID"""
+        for obj in self._storage:
+            if getattr(obj, 'id', None) == obj_id:
+                return obj
+        return None
