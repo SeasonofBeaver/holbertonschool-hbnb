@@ -52,10 +52,16 @@ class HBnBFacade:
         """Update an amenity by ID."""
         amenity = self.get_amenity(amenity_id)
         if not amenity:
-            return None  # If the amenity doesn't exist, return None
+            raise ValueError("Amenity not found.")
 
-        updated_amenity = self.amenity_repo.update(amenity_id, amenity_data)
-        return updated_amenity
+        for key, value in amenity_data.items():
+            if hasattr(amenity, key):
+                setattr(amenity, key, value)
+
+        # Update the place in the repository
+        self.place_repo.update(amenity_id, amenity.__dict__)  # Pass the dictionary of attributes
+
+        return amenity
     
 #Place Facade    
     def create_place(self, place_data):
@@ -74,8 +80,17 @@ class HBnBFacade:
         return self.place_repo.get_all()
 
     def update_place(self, place_id, place_data):
-        place = self.get_place(place_id)  # Fetch place to update
-        if not place:
+        # Fetch the existing place
+        existing_place = self.place_repo.get(place_id)
+        if not existing_place:
             raise ValueError("Place not found.")
 
-        return self.place_repo.update(place_id, place)
+        # Update the existing place's attributes based on provided data
+        for key, value in place_data.items():
+            if hasattr(existing_place, key):
+                setattr(existing_place, key, value)
+
+        # Update the place in the repository
+        self.place_repo.update(place_id, existing_place.__dict__)  # Pass the dictionary of attributes
+
+        return existing_place
