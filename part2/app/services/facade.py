@@ -47,11 +47,8 @@ class HBnBFacade:
     def update_amenity(self, amenity_id, amenity_data):
         """Update an amenity by ID."""
         amenity = self.get_amenity(amenity_id)
-        if amenity:
-            # Update only the relevant fields (e.g., name)
-            if 'name' in amenity_data:
-                amenity.name = amenity_data['name']
-            # Update the amenity in the repository
-            self.amenity_repo.update(amenity_id, amenity)
-            return amenity
-        return None
+        if not amenity:
+            return None  # If the amenity doesn't exist, return None
+
+        updated_amenity = self.amenity_repo.update(amenity_id, amenity_data)
+        return updated_amenity
