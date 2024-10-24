@@ -24,8 +24,8 @@ validation, along with the Facade pattern to manage interaction between layers.
 ### 1. Clone the Repository
 
 ```
-git clone <repository-url>
-cd hbnb
+git clone https://@github.com/SeasonofBeaver/holbertonschool-hbnb.git
+cd holbertonschool-hbnb
 ```
 
 ### 2. Install Requirements
