@@ -1,4 +1,4 @@
-from basemodel import BaseModel
+from .basemodel import BaseModel
 from app.models.place import Place
 from app.models.user import User
 
