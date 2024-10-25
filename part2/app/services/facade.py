@@ -115,14 +115,18 @@ class HBnBFacade:
         return self.review_repo.get(place_id)
 
     def update_review(self, review_id, review_data):
-        review = self.review_repo.get(review_id)
-        if review:
-            if 'text' in review_data:
-                review.text = review_data['text']
-            if 'rating' in review_data:
-                review.rating = review_data['rating']
-            if 'user_id' in review_data:
-                review.user_id = review_data['user_id']
+        existing_review = self.review_repo.get(review_id)
+        if not existing_review:
+            raise ValueError("Review not found.")
+
+        # Update the existing place's attributes based on provided data
+        for key, value in review_data.items():
+            if hasattr(existing_review, key):
+                setattr(existing_review, key, value)
+        
+        self.review_repo.update(review_id, existing_review.__dict__)  # Pass the dictionary of attributes
+
+        return existing_review
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)

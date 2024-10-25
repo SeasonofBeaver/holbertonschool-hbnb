@@ -10,6 +10,7 @@ class Place(BaseModel):
         self.latitude = latitude
         self.longitude = longitude
         self.owner_id = owner_id  # Ensure this is a User object
+        self.reviews = []
         self.amenities = amenities or []  # Ensure this is a list of Amenity objects
 
     def validate(self):
