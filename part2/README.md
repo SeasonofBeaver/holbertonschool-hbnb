@@ -85,3 +85,8 @@ This will start the Flask development server on ```http://127.0.0.1:5000/```.
 * Integrate a database-backed Persistence layer.
 * Add error handling, input validation, and more complex business logic in future tasks.
 * Expand test coverage with unit and integration tests.
+
+## Authors
+
+* [Quentin Lepoutre](https://github.com/MrKay12)
+* [Jakob Stein](https://github.com/SeasonofBeaver)
