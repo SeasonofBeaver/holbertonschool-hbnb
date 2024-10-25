@@ -12,7 +12,7 @@ validation, along with the Facade pattern to manage interaction between layers.
 ## Project Structure
 
 ```
-hbnb/
+part2/
 ├── app/
 │   ├── __init__.py                   # Initializes the Flask app and API
 │   ├── api/
