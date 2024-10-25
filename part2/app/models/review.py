@@ -1,16 +1,15 @@
-from basemodel import BaseModel
+from .basemodel import BaseModel
 from app.models.place import Place
 from app.models.user import User
 
 
 class Review(BaseModel):
-    def __init__(self, text, rating, place, user):
+    def __init__(self, text, rating, user_id, place_id):
         super().__init__()
         self.text = text
         self.rating = rating
-        self.place = place
-        self.user = user
-        self.validate()
+        self.user_id = user_id
+        self.place_id = place_id
 
     def validate(self):
         if not self.text:
