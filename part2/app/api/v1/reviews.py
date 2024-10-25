@@ -1,10 +1,11 @@
 from flask_restx import Namespace, Resource, fields
 from app.services.facade import HBnBFacade
+from app import facade
 
 
 api = Namespace('reviews', description='Review operations')
 
-facade = HBnBFacade()
+
 
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
@@ -107,8 +108,6 @@ class PlaceReviewList(Resource):
             {
                 'id': review.id,
                 'text': review.text,
-                'rating': review.rating,
-                'user_id': review.user_id,
-                'place_id': review.place_id
+                'rating': review.rating
             } for review in place_reviews
         ], 200
