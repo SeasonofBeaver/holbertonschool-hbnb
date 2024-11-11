@@ -3,6 +3,9 @@ from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 class HBnBFacade:
     def __init__(self):
@@ -33,6 +36,14 @@ class HBnBFacade:
         for key, value in user_data.items():
             setattr(user, key, value)
         return user
+
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
 
 #Amenity Facades
     def create_amenity(self, amenity_data):
