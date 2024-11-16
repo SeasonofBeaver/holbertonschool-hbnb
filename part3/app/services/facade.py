@@ -4,6 +4,7 @@ from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
 from flask_bcrypt import Bcrypt
+from sqlalchemy.orm.exc import NoResultFound
 
 bcrypt = Bcrypt()
 
@@ -148,3 +149,11 @@ class HBnBFacade:
         if review:
             self.review_repo.delete(review_id)
             return {'message': 'Review deleted sucessfully'}
+
+    def has_user_reviewed_place(user_id, place_id):
+        try:
+            review = Review.query.filter_by(user_id=user_id, place_id=place_id).one_or_none()
+            return review is not None
+        except Exception as e:
+            print(f"Error checking user review: {e}")
+        return False
