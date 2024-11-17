@@ -37,7 +37,7 @@ class Amenity(db.Model):
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
     places = relationship('Place', backref='owner', lazy=True)
     reviews = relationship('Review', backref='author', lazy=True)
