@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services.facade import HBnBFacade
 from app import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 api = Namespace('places', description='Place operations')
 
@@ -18,11 +19,15 @@ place_model = api.model('Place', {
 
 @api.route('/')
 class PlaceList(Resource):
+    @jwt_required()
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new place"""
+        current_user = get_jwt_identity()
+        data = api.payload
+        data['owner_id'] = current_user['id']
         place_data = api.payload
         try:
             new_place = facade.create_place(place_data)
@@ -77,18 +82,49 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, place_id):
         """Update a place's information"""
-        # Placeholder for the logic to update a place by ID
-        place_data = api.payload
-        if not place_data:
+        current_user = get_jwt_identity()
+        place = facade.get_place(place_id)
+        if not place:
             return {'message': 'Invalid input data'}, 400
-    
-        updated_place = facade.update_place(place_id, place_data)
+        if place.owner_id != current_user['id']:
+            return {'error': 'Unauthorized action'}, 403
+        updated_data = api.payload
+        updated_place = facade.update_place(place_id, updated_data)
         if not updated_place:
             return {'message': 'Place not found'}, 404
         
         return {
+            "title": updated_place.title,
+            "description": updated_place.description,
+            "price": updated_place.price,
+            "latitude": updated_place.latitude,
+            "longitude": updated_place.longitude,
+            "owner_id": updated_place.owner_id
+            }, 200
+
+@api.route('/places/<place_id>')
+class AdminPlaceModify(Resource):
+    @jwt_required()
+    def put(self, place_id):
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        place_data = api.payload
+
+        # Skip ownership check for admins
+        if not is_admin:
+            current_user_id = claims['id']
+            place = facade.get_place(place_id)
+            if place.owner_id != current_user_id:
+                return {'error': 'Unauthorized action'}, 403
+
+        # update the place
+        updated_place = facade.update_place(place_id, place_data)
+        return {
+            "id": updated_place.id,
             "title": updated_place.title,
             "description": updated_place.description,
             "price": updated_place.price,
