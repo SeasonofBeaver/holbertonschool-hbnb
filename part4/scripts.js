@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loginUser(email, password) {
-    const apiUrl = 'https://your-api-url/login'; // Replace with your API URL
+    const apiUrl = '/';
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
