@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    checkAuthentication();
+    document.getElementById('price-filter').addEventListener('change', filterPlaces);
+
     const loginForm = document.getElementById('login-form');
 
     if (loginForm) {
@@ -19,6 +22,68 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function checkAuthentication() {
+    const token = getCookie('token');
+    const loginLink = document.querySelector('.login-button');
+
+    if (!token) {
+        loginLink.style.display = 'block';
+    } else {
+        loginLink.style.display = 'none';
+        fetchPlaces(token);
+    }
+}
+
+async function fetchPlaces(token) {
+    try {
+        const response = await fetch('/place', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const places = await response.json();
+        displayPlaces(places);
+    } catch (error) {
+        console.error('Error fetching places:', error);
+    }
+}
+
+function displayPlaces(places) {
+    const placesList = document.getElementById('places-list');
+    placesList.innerHTML = '';
+
+    places.forEach(place => {
+        const placeCard = document.createElement('div');
+        placeCard.className = 'place-card';
+        placeCard.innerHTML = `
+            <h3>${place.name}</h3>
+            <p>Price per night: $${place.price}</p>
+            <button class="details-button">View Details</button>
+        `;
+        placesList.appendChild(placeCard);
+    });
+}
+
+function filterPlaces() {
+    const selectedPrice = document.getElementById('price-filter').value;
+    const placeCards = document.querySelectorAll('.place-card');
+
+    placeCards.forEach(card => {
+        const price = parseInt(card.querySelector('p').textContent.replace('Price per night: $', ''), 10);
+        if (selectedPrice === 'all' || price <= parseInt(selectedPrice, 10)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
 
 async function loginUser(email, password) {
     const apiUrl = '/';

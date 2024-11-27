@@ -13,17 +13,20 @@
   </header>
   <main>
     <h1>Places</h1>
-    <div class="places">
-      <div class="place-card">
-        <h3>Place Name</h3>
-        <p>Price per night: $100</p>
-        <button class="details-button">View Details</button>
-      </div>
-      <!-- Repeat place-card for more places -->
+    <label for="price-filter">Filter by price:</label>
+    <select id="price-filter">
+      <option value="all">All</option>
+      <option value="10">$10</option>
+      <option value="50">$50</option>
+      <option value="100">$100</option>
+    </select>
+    <div id="places-list" class="places">
+      <!-- Places will be dynamically populated here -->
     </div>
   </main>
   <footer>
     <p>&copy; 2024 All rights reserved</p>
   </footer>
+  <script src="scripts.js"></script>
 </body>
 </html>
