@@ -23,6 +23,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const reviewForm = document.getElementById('review-form');
+    const token = checkAuthentication();
+    const placeId = getPlaceIdFromURL();
+
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const reviewText = document.getElementById('review-text').value;
+            const reviewRating = document.getElementById('review-rating').value;
+
+            if (!reviewText || !reviewRating) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            submitReview(token, placeId, reviewText, reviewRating);
+        });
+    }
+});
+
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -120,5 +142,37 @@ function displayErrorMessage(message) {
         errorContainer.style.display = 'block';
     } else {
         alert(message); // Fallback if no error container exists
+    }
+}
+
+function getPlaceIdFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('placeId');
+}
+
+async function submitReview(token, placeId, reviewText, reviewRating) {
+    try {
+        const response = await fetch(`/${placeId}/reviews`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                text: reviewText,
+                rating: parseInt(reviewRating),
+            }),
+        });
+
+        if (response.ok) {
+            alert('Review submitted successfully!');
+            document.getElementById('review-form').reset(); // Clear the form
+        } else {
+            const error = await response.json();
+            alert(`Error: ${error.message || 'Failed to submit review'}`);
+        }
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        alert('An unexpected error occurred. Please try again.');
     }
 }
